@@ -142,7 +142,7 @@ class Parser:
         elif token.get_token_type() == TokenType.DIV_TOK:
             operator = ArithmeticOperator.DIV_OP
         else:
-            raise ValueError("arithmetic operator expected")
+            raise ParserException("arithmetic operator expected")
         return operator
 
     def get_if_statement(self):

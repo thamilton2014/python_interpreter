@@ -12,23 +12,21 @@ class LexicalAnalyzer(object):
     # #
     def __init__(self, file_name):
         if file_name is None and file_name.__len__() == 0:
-            raise ValueError("invalid file name argument")
+            raise ValueError("[Parser] invalid file name argument")
         data_file = open(file_name, "r")
         input_data = data_file.read()
         line_number = 1
         column_number = 1
-        buffer_data = ""
         self.token_list = []
         for word in input_data.split():
-            if word.isspace():
-                buffer_data += ""
-            else:
-                token_type = self.get_token_type(line_number, column_number, word)
-                self.token_list.append(Token(line_number + 1, column_number + 1, word, token_type))
-            if word is '\n':
-                line_number += 1
-                column_number += 0
+            lookup = word
+            with open(file_name) as myFile:
+                for num, line in enumerate(myFile, 1):
+                    if lookup in line:
+                        line_number = num
             column_number += 1
+            token_type = self.get_token_type(line_number, column_number, word)
+            self.token_list.append(Token(line_number + 1, column_number + 1, word, token_type))
         data_file.close()
         self.token_list.append(Token(line_number, 1, "EOS", TokenType.EOS_TOK))
 
@@ -91,22 +89,29 @@ class LexicalAnalyzer(object):
         elif lexeme.__eq__("/"):
             tok_type = TokenType.DIV_TOK
         else:
-            raise LexicalException("invalid lexeme at row "
-                                   + str(line_number) + " and column " + str(column_number + 1))
+            raise LexicalException("invalid lexeme : " + lexeme)
         return tok_type
 
+    # #
+    # @return Token
+    # @throws LexicalException
+    # #
     def get_look_ahead_token(self):
         if not self.token_list:
             raise LexicalException("No more tokens")
         return self.token_list[0]
 
+    # #
+    # @return Token
+    # @throws LexicalException
+    # #
     def get_next_token(self):
         if self.token_list is None or len(self.token_list) == 0:
             raise LexicalException("No more tokens")
         return self.token_list.pop(0)
 
+    # #
+    # @return lexeme
+    # #
     def get_lexeme(self, word):
         return word
-
-    def is_valid_identifier(self):
-        pass
