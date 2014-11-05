@@ -16,7 +16,6 @@ class LexicalAnalyzer(object):
         data_file = open(file_name, "r")
         input_data = data_file.read()
         line_number = 1
-        column_number = 1
         self.token_list = []
         for word in input_data.split():
             lookup = word
@@ -24,18 +23,16 @@ class LexicalAnalyzer(object):
                 for num, line in enumerate(myFile, 1):
                     if lookup in line:
                         line_number = num
-            column_number += 1
-            token_type = self.get_token_type(line_number, column_number, word)
-            self.token_list.append(Token(line_number + 1, column_number + 1, word, token_type))
+            token_type = self.get_token_type(line_number, word)
+            self.token_list.append(Token(line_number + 1, word, token_type))
         data_file.close()
-        self.token_list.append(Token(line_number, 1, "EOS", TokenType.EOS_TOK))
+        self.token_list.append(Token(-1, "EOS", TokenType.EOS_TOK))
 
     # #
     # @param lexeme         = String value
     # @param line_number    = Integer value of line number
-    # @param column_number  = Integer value of column number
     # #
-    def get_token_type(self, line_number, column_number, lexeme):
+    def get_token_type(self, line_number, lexeme):
         if lexeme.__eq__("feature"):
             tok_type = TokenType.FEATURE_TOK
         elif lexeme.isalpha() and lexeme.__len__() == 1:
@@ -89,7 +86,7 @@ class LexicalAnalyzer(object):
         elif lexeme.__eq__("/"):
             tok_type = TokenType.DIV_TOK
         else:
-            raise LexicalException("invalid lexeme : " + lexeme)
+            raise LexicalException("invalid lexeme at row %s : %s" + lexeme % (line_number, lexeme))
         return tok_type
 
     # #

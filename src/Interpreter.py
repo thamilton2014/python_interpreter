@@ -7,7 +7,7 @@ __author__ = 'thamilton'
 
 if __name__ == "__main__":
     try:
-        parser = Parser("/Users/thamilton/PycharmProjects/Project_2/test_data/test1.e")
+        parser = Parser("/Users/thamilton/PycharmProjects/Project_2/test_data/test3.e")
         parser.feature().execute()
         memory = Memory()
         memory.display_memory()
